@@ -1,0 +1,50 @@
+version: '3'
+services:
+  auth:
+      container_name: bnss_auth_server
+      hostname: auth.acme.com
+      restart: always
+      dns:
+        - "192.168.5.9"
+      build:
+        context: ./auth-server
+      networks:
+        bnss_sto_vlan1:
+          ipv4_address: "192.168.5.15"
+      volumes:
+        - "/etc/localtime:/etc/localtime:ro"
+  web:
+      container_name: bnss_www_server
+      hostname: www.acme.com
+      restart: always
+      dns:
+        - "192.168.5.9"
+      ports:
+        - 443:443/tcp
+      build:
+        context: ./www_server
+      networks:
+        bnss_sto_vlan1:
+          ipv4_address: "192.168.5.16"
+      volumes:
+        - "/etc/localtime:/etc/localtime:ro"
+
+  resource_srv:
+      container_name: bnss_rs_server
+      hostname: rs.acme.com
+      restart: always
+      dns:
+        - "192.168.5.9"
+      build:
+        context: ./resource-server
+      networks:
+        bnss_sto_vlan1:
+          ipv4_address: "192.168.5.17"
+      volumes:
+        - "/etc/localtime:/etc/localtime:ro"
+        - "./resource-server/resources:/usr/app/resources"
+        #- "/etc/timezone:/etc/timezone:ro"
+
+networks:
+  bnss_sto_vlan1: 
+    external: true
